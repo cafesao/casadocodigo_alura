@@ -1,12 +1,14 @@
 //Importação
 const listaMarko = require('../views/livros/lista/lista.marko')
+const formMarko = require('../views/livros/form/form.marko')
 
 //Banco de Dados
 const db = require('../config/database')
+const livroDao = require('../infra/lista-dao')
 
 //Exportações + Metodos
 module.exports = {
-  coletarTudo(req, res) {
+  paginaInicial(req, res) {
     res.send(`
           <html lang="pt-br">
               <head>
@@ -23,10 +25,24 @@ module.exports = {
   },
 
   coletarLivros(req, res) {
-    db.all('SELECT * FROM livros', (erro, resultados) => {
-      res.marko(listaMarko, {
-        livros: resultados,
-      })
-    })
+    livroDao
+      .buscarlista()
+      .then((livros) =>
+        res.marko(listaMarko, {
+          livros,
+        }),
+      )
+      .catch((erro) => console.log(erro))
+  },
+
+  formLivro(req, res) {
+    res.marko(formMarko)
+  },
+
+  adicionarLivro(req, res) {
+    livroDao
+      .adiciona(req.body)
+      .then(res.redirect('/api/livros'))
+      .catch((erro) => console.log(erro))
   },
 }
