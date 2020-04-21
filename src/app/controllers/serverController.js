@@ -1,6 +1,9 @@
 //Importação
 const listaMarko = require('../views/livros/lista/lista.marko')
 
+//Banco de Dados
+const db = require('../config/database')
+
 //Exportações + Metodos
 module.exports = {
   coletarTudo(req, res) {
@@ -20,17 +23,10 @@ module.exports = {
   },
 
   coletarLivros(req, res) {
-    res.marko(listaMarko, {
-      livros: [
-        {
-          id: 1,
-          titulo: 'Fundamentos do Node',
-        },
-        {
-          id: 2,
-          titulo: 'Node Avançado',
-        },
-      ],
+    db.all('SELECT * FROM livros', (erro, resultados) => {
+      res.marko(listaMarko, {
+        livros: resultados,
+      })
     })
   },
 }
