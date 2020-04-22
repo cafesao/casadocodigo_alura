@@ -36,7 +36,7 @@ module.exports = {
   },
 
   formLivro(req, res) {
-    res.marko(formMarko)
+    res.marko(formMarko, { livro: {} })
   },
 
   adicionarLivro(req, res) {
@@ -44,5 +44,30 @@ module.exports = {
       .adiciona(req.body)
       .then(res.redirect('/api/livros'))
       .catch((erro) => console.log(erro))
+  },
+
+  removerLivro(req, res) {
+    const id = req.params.id
+
+    livroDao
+      .remover(id)
+      .then(() => res.status(200).end())
+      .catch((err) => console.log(err))
+  },
+
+  buscarLivro(req, res) {
+    const id = req.params.id
+
+    livroDao
+      .buscarID(id)
+      .then((livro) => res.marko(formMarko, { livro }))
+      .catch((err) => console.log(err))
+  },
+
+  editarLivro(req, res) {
+    livroDao
+      .atualizar(req.body)
+      .then(res.redirect('/api/livros'))
+      .catch((err) => console.log(err))
   },
 }
