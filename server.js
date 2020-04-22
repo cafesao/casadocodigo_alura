@@ -4,6 +4,7 @@ require('marko/node-require.js').install()
 const markoExpress = require('marko/express.js')
 const express = require('express')
 const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
 const routes = require('./src/app/routes/routes.js')
 
 //Constantes
@@ -15,6 +16,16 @@ server.use(
     extended: true,
   }),
 )
+server.use(
+  methodOverride((req, res) => {
+    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+      let method = req.body._method
+      delete req.body._method
+      return method
+    }
+  }),
+)
+server.use('/estatico', express.static('./src/app/public'))
 server.use(markoExpress())
 server.use('/api', routes)
 
